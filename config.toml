@@ -11,12 +11,11 @@ patches-source = "anddea/revanced-patches"
 integrations-source = "anddea/revanced-integrations"
 rv-brand = "anddea ReVanced"
 build-mode = "both"
-version = "19-11-38"
 included-patches = "'MaterialYou'"
 patches-version = "v2.224.0-dev.2"
 integrations-version = "v0.151.0-dev.2"
 
-[YouTube-Music]
+[YouTube Music]
 uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
 patches-source = "anddea/revanced-patches"
 integrations-source = "anddea/revanced-integrations"
