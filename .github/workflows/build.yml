@@ -114,7 +114,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: 'IgorTHh1337/rvxb-magisk-lol'
+          repository: 'Snaky1a/rvx-magisk'
           fetch-depth: 0
           submodules: true
 
@@ -153,7 +153,7 @@ jobs:
         run: python build.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: 'IgorTHh1337/rvxb-magisk-lol'
+          GITHUB_REPOSITORY: 'Snaky1a/rvx-magisk'
           NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
 
       - name: Get output
