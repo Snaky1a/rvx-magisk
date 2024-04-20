@@ -200,10 +200,16 @@ jobs:
           cd ..
           find . -name "*-anddea-update.json" | grep . || : >dummy-update.json
 
+      - name: Update git
+        run: |
+          git fetch origin update
+          git pull origin update
+
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: update
-          skip_checkout: true
+          skip_fetch: false
+          skip_checkout: false
           file_pattern: build_rvxb.md *-rvxb-update.json
           commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
  build_rvxr:
@@ -296,10 +302,16 @@ jobs:
 
          find . -name "*-rvxr-update.json" | grep . || : >dummy-update.json
 
+     - name: Update git
+       run: |
+         git fetch origin update
+         git pull origin update
+
      - uses: stefanzweifel/git-auto-commit-action@v5
        with:
          branch: update
-         skip_checkout: true
+         skip_fetch: false
+         skip_checkout: false
          file_pattern: build_rvxr.md *-rvxr-update.json
          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
  build_rvxab:
@@ -392,10 +404,16 @@ jobs:
 
          find . -name "*-rvxab-update.json" | grep . || : >dummy-update.json
 
+     - name: Update git
+       run: |
+        git fetch origin update
+        git pull origin update
+
      - uses: stefanzweifel/git-auto-commit-action@v5
        with:
          branch: update
-         skip_checkout: true
+         skip_fetch: false
+         skip_checkout: false
          file_pattern: build_rvxab.md *-rvxab-update.json
          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
  build_rvxar:
@@ -488,10 +506,16 @@ jobs:
 
          find . -name "*-rvxar-update.json" | grep . || : >dummy-update.json
 
+     - name: Update git
+       run: |
+         git fetch origin update
+         git pull origin update
+
      - uses: stefanzweifel/git-auto-commit-action@v5
        with:
          branch: update
-         skip_checkout: true
+         skip_fetch: false
+         skip_checkout: false
          file_pattern: build_rvxar.md *-rvxar-update.json
          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
  build_rvxm:
@@ -584,9 +608,15 @@ jobs:
 
          find . -name "*-rvxm-update.json" | grep . || : >dummy-update.json
 
+     - name: Update git
+       run: |
+         git fetch origin update
+         git pull origin update
+    
      - uses: stefanzweifel/git-auto-commit-action@v5
        with:
-         branch: update
-         skip_checkout: true
-         file_pattern: build_rvxm.md *-rvxm-update.json
-         commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+        branch: update
+        skip_fetch: false
+        skip_checkout: false
+        file_pattern: build_rvxm.md *-rvxm-update.json
+        commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
