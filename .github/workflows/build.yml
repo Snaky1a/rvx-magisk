@@ -109,7 +109,7 @@ jobs:
          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
 
  build_rvxb:
-    needs: build_modules
+    # needs: build_modules
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -205,7 +205,7 @@ jobs:
           file_pattern: build_rvxb.md *-rvxb-update.json
           commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
  build_rvxr:
-   needs: build_rvxb
+  #  needs: build_rvxb
    runs-on: ubuntu-latest
    steps:
      - name: Checkout
@@ -299,7 +299,7 @@ jobs:
          file_pattern: build_rvxr.md *-rvxr-update.json
          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
  build_rvxab:
-   needs: build_rvxr
+  #  needs: build_rvxr
    runs-on: ubuntu-latest
    steps:
      - name: Checkout
@@ -393,7 +393,7 @@ jobs:
          file_pattern: build_rvxab.md *-rvxab-update.json
          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
  build_rvxar:
-   needs: build_rvxab
+  #  needs: build_rvxab
    runs-on: ubuntu-latest
    steps:
      - name: Checkout
@@ -487,7 +487,7 @@ jobs:
          file_pattern: build_rvxar.md *-rvxar-update.json
          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
  build_rvxm:
-   needs: build_rvxar
+  #  needs: build_rvxar
    runs-on: ubuntu-latest
    steps:
      - name: Checkout
