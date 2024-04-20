@@ -1,0 +1,26 @@
+enable-magisk-update = true   # set this to false if you do not want to receive updates for the module in magisk app
+
+patches-version = "v2.224.0-dev.10"
+integrations-version = "v0.151.0-dev.10"
+
+# add 'enabled = false' for not patching a specific app or remove it from the config
+# see https://github.com/j-hc/revanced-magisk-module/blob/main/CONFIG.md for more detailed explanations
+
+# you can use rvmm-config-gen to generate a config
+
+[YouTube]
+apkmirror-dlurl = "https://apkmirror.com/apk/google-inc/youtube/"
+patches-source = "anddea/revanced-patches"
+integrations-source = "anddea/revanced-integrations"
+rv-brand = "anddea ReVanced RevRed Icon"
+build-mode = "both"
+included-patches = "'Custom branding icon YouTube' 'MaterialYou'"
+
+
+[YouTube Music]
+uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
+patches-source = "anddea/revanced-patches"
+integrations-source = "anddea/revanced-integrations"
+rv-brand = "anddea ReVanced RevRed Icon"
+build-mode = "both"
+included-patches = "'Custom branding icon YouTube Music'"
