@@ -160,6 +160,8 @@ jobs:
           echo "${DELIM}" >> "$GITHUB_OUTPUT"
           cp -f build.md build_rvxb.tmp
 
+      - run: sleep 10
+
       - name: Upload modules to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -252,6 +254,8 @@ jobs:
          cat build.md >> "$GITHUB_OUTPUT"
          echo "${DELIM}" >> "$GITHUB_OUTPUT"
          cp -f build.md build_rvxr.tmp
+
+     - run: sleep 20
 
      - name: Upload modules to release
        uses: svenstaro/upload-release-action@v2
@@ -347,6 +351,8 @@ jobs:
          echo "${DELIM}" >> "$GITHUB_OUTPUT"
          cp -f build.md build_rvxab.tmp
 
+     - run: sleep 30
+
      - name: Upload modules to release
        uses: svenstaro/upload-release-action@v2
        with:
@@ -441,6 +447,8 @@ jobs:
          echo "${DELIM}" >> "$GITHUB_OUTPUT"
          cp -f build.md build_rvxar.tmp
 
+     - run: sleep 40
+
      - name: Upload modules to release
        uses: svenstaro/upload-release-action@v2
        with:
@@ -534,6 +542,8 @@ jobs:
          cat build.md >> "$GITHUB_OUTPUT"
          echo "${DELIM}" >> "$GITHUB_OUTPUT"
          cp -f build.md build_rvxm.tmp
+
+     - run: sleep 50
 
      - name: Upload modules to release
        uses: svenstaro/upload-release-action@v2
