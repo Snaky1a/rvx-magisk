@@ -8,37 +8,65 @@ def get_config() -> dict[str, Any]:
     with open("config.toml", "rb") as f:
         return tomllib.load(f)
 
-def download_file(url: str, output: str) -> None:
+
+def download_file(url: str, output: str):
     resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     if resp.ok:
         with open(output, "wb") as f:
             f.write(resp.content)
-            print("Downloaded successfully:", output)
+            print(f"Successfully downloaded {output}")
+            print(f"File size: {round(len(resp.content) / 1024 / 1024, 2)} MB")
     else:
-        print("Failed to download:", url)
+        print(f"Failed to download: {url}")
 
-def download_youtube_from_apkmirror(output: str) -> None:
+
+def download_youtube_from_apkmirror(output: str) -> NoReturn:
     config = get_config()
-    link_url = config.get("YouTube", {}).get("apkmirror-dlurl")
-    version = config.get("YouTube", {}).get("version")
 
-    if not link_url or not version:
-        print("YouTube link or version not found in config")
-        return
+    # Get youtube from config
+    link_url = config["YouTube"]["apkmirror-dlurl"]
+    version = config["YouTube"]["version"]
 
-    print(f"Downloading YouTube version {version}")
-    url = f"{link_url}/youtube-{version}-release/"
-    resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    original_url = "https://apkmirror.com"
+
+    print(f"Downloading Youtube version {version}")
+    print("Fetching YouTube APK releases...")
+    resp = requests.get(
+        f"{link_url}/youtube-{version}-release/", headers={"User-Agent": "Mozilla/5.0"}
+    )
     if not resp.ok:
-        print("Failed to fetch YouTube APK releases")
-        return
+        print(f"Failed to fetch YouTube APK releases\nStatus code: {resp.status_code}")
+        exit(1)
 
     soup = BeautifulSoup(resp.text, "html.parser")
-    download_link = soup.select_one("#downloads a[href*='download/apk']")
-    if not download_link:
-        print("Download link not found")
-        return
+    selected = soup.select_one(
+        "#downloads > div:nth-child(7) > div > div:nth-child(3) > div:nth-child(5) > a"
+    )
 
-    download_url = download_link["href"]
-    key_url = download_url.replace("download", "download/key")
-    download_file(key_url, output)
+    print("Selected download link\n", selected)
+    download_url = original_url + selected["href"]
+
+    resp = requests.get(download_url, headers={"User-Agent": "Mozilla/5.0"})
+    if resp.ok:
+        soup2 = BeautifulSoup(resp.text, "html.parser")
+        selector = soup2.select_one(
+            "#file > div.row.d-flex.f-a-start > div.center.f-sm-50 > div > a"
+        )
+        print("Found file selector\n", selector)
+        key_url = original_url + selector["href"]
+
+    resp = requests.get(key_url, headers={"User-Agent": "Mozilla/5.0"})
+    soup3 = BeautifulSoup(resp.text, "html.parser")
+    selector = soup3.select_one(
+        "#post-5966750 > div.card-with-tabs > div > div > div:nth-child(1) > p:nth-child(3) > span > a"
+    )
+
+    if resp.ok:
+        print("Found key url\n", selector)
+        download_url = original_url + selector["href"]
+
+        print("Downloading apk...")
+        download_file(download_url, output)
+
+    print(f"Done. {output}")
+    return output

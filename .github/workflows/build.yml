@@ -148,16 +148,16 @@ jobs:
           TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
           if [ -z "$TAG" ]; then TAG=0; fi
           echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
-            
-      - name: output test
-        run: ls
 
       - name: Build modules/APKs
-        run: python build.py
+        run: ./build.sh config.toml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: 'Snaky1a/rvx-magisk'
           NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+
+      - name: output test
+        run: ls
 
       - name: Get output
         id: get_output
