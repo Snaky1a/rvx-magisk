@@ -145,6 +145,9 @@ jobs:
           TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
           if [ -z "$TAG" ]; then TAG=0; fi
           echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
+            
+      - name: output test
+        run: ls
 
       - name: Build modules/APKs
         run: python build.py
@@ -199,9 +202,6 @@ jobs:
           done
           cd ..
           find . -name "*-rvxb-update.json" | grep . || : >dummy-update.json
-      
-      - name: output test
-        run: ls
       
       - run: sleep 10000
 
