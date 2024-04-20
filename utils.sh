@@ -464,7 +464,7 @@ build_rv() {
 		base_template=$(mktemp -d -p $TEMP_DIR)
 		cp -a $MODULE_TEMPLATE_DIR/. "$base_template"
 		local json_file="${2:-}"
-		local upj="${table,,}-${json_file}-update.json"
+		local upj="${table,,}-${2:-}-update.json"
 
 		module_config "$base_template" "$pkg_name" "$version" "$arch"
 		module_prop \

@@ -37,7 +37,7 @@ fi
 ENABLE_MAGISK_UPDATE=$(toml_get "$main_config_t" enable-magisk-update) || ENABLE_MAGISK_UPDATE=true
 if [ "$ENABLE_MAGISK_UPDATE" = true ] && [ -z "${GITHUB_REPOSITORY:-}" ]; then
 	pr "You are building locally. Magisk updates will not be enabled."
-	ENABLE_MAGISK_UPDATE=false
+	ENABLE_MAGISK_UPDATE=true
 fi
 # -----------------
 
@@ -151,6 +151,7 @@ for table_name in $(toml_get_table_names); do
 		app_args[module_prop_name]="${app_args[module_prop_name]}-arm64"
 		app_args[arch]="arm64-v8a"
 		idx=$((idx + 1))
+		echo ${2:-}
 		build_rv "$(declare -p app_args)" ${2:-} &
 		app_args[table]="$table_name (arm-v7a)"
 		app_args[module_prop_name]="${app_args[module_prop_name]}-arm"
@@ -160,6 +161,7 @@ for table_name in $(toml_get_table_names); do
 		build_rv "$(declare -p app_args)" ${2:-} &
 	else
 		idx=$((idx + 1))
+		echo ${2:-}
 		build_rv "$(declare -p app_args)" ${2:-} &
 	fi
 done

@@ -204,7 +204,7 @@ jobs:
             get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
           done
           cd ..
-          find . -name "*-rvxb-update.json" | grep . || : >dummy-update.json
+          find . -name "*-anddea-update.json" | grep . || : >dummy-update.json
       
       - run: sleep 60
 
