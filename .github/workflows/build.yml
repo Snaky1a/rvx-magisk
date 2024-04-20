@@ -150,7 +150,7 @@ jobs:
           echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
 
       - name: Build modules/APKs
-        run: ./build.sh config.toml
+        run: ./build.sh config.toml anddea
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: 'Snaky1a/rvx-magisk'
@@ -206,7 +206,7 @@ jobs:
           cd ..
           find . -name "*-rvxb-update.json" | grep . || : >dummy-update.json
       
-      - run: sleep 10000
+      - run: sleep 60
 
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
