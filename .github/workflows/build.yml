@@ -157,7 +157,7 @@ jobs:
           NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
 
       - name: output test
-        run: ls
+        run: ls build
 
       - name: Get output
         id: get_output
