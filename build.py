@@ -1,4 +1,5 @@
 import os
 from utils import *
 
-d = download_from_apkmirror("youtube.apk")
+apk_file = download_youtube_from_apkmirror("youtube.apk")
+
