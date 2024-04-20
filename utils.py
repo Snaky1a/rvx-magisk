@@ -32,5 +32,6 @@ def download_from_apkmirror(link: str, version: str, output: str, arch: str, dpi
     resp = requests.get(download_url, headers={"User-Agent": "Mozilla/5.0"})
     with open(output, "wb") as f:
         f.write(resp.content)
+        print("size", len(resp.content))
     
     return f"Done. {output}"
