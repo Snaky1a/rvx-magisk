@@ -13,108 +13,108 @@ on:
   workflow_dispatch:
 
 jobs:
-#  build_modules:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 0
-#          submodules: true
-#
-#      - name: Set up Java
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: "zulu"
-#          java-version: "17"
-#
-#      - name: Update config
-#        if: ${{ inputs.from_ci }}
-#        run: |
-#          if git checkout origin/update build.md; then
-#            UPDATE_CFG=$(./build.sh config.toml --config-update)
-#            if [ "$UPDATE_CFG" ]; then
-#              echo "$UPDATE_CFG" > config.toml
-#            fi
-#          fi
-#
-#      - name: Get next version code
-#        id: next_ver_code
-#        run: |
-#          TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
-#          if [ -z "$TAG" ]; then TAG=0; fi
-#          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
-#
-#      - name: Build modules/APKs
-#        run: ./build.sh config.toml
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          GITHUB_REPOSITORY: ${{ github.repository }}
-#          NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#
-#      - name: Get output
-#        id: get_output
-#        run: |
-#          DELIM="$(openssl rand -hex 8)"
-#          echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
-#          cat build.md >> "$GITHUB_OUTPUT"
-#          echo "${DELIM}" >> "$GITHUB_OUTPUT"
-#          cp -f build.md build.tmp
-#
-#      - name: Upload modules to release
-#        uses: svenstaro/upload-release-action@v2
-#        with:
-#          body: ${{ steps.get_output.outputs.BUILD_LOG }}
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: ./build/*
-#          release_name: anddea ReVanced Modules
-#          tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#          file_glob: true
-#          overwrite: true
-#
-#      - name: Update changelog and Magisk update json
-#        id: update_config
-#        run: |
-#          git checkout -f update || git switch --discard-changes --orphan update
-#          cp -f build.tmp build.md
-#          get_update_json() {
-#            echo "{
-#            \"version\": \"$1\",
-#            \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }},
-#            \"zipUrl\": \"$2\",
-#            \"changelog\": \"https://raw.githubusercontent.com/${{ github.repository }}/update/build.md\"
-#          }"
-#          }
-#
-#          cd build || { echo "build folder not found"; exit 1; }
-#          for OUTPUT in *magisk*.zip; do
-#            [ "$OUTPUT" = "*magisk*.zip" ] && continue
-#            ZIP_S=$(unzip -p "$OUTPUT" module.prop)
-#            if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
-#            UPDATE_JSON="${UPDATE_JSON##*/}"
-#            VER=$(echo "$ZIP_S" | grep version=)
-#            VER="${VER##*=}"
-#            DLURL="${{ github.server_url }}/${{ github.repository }}/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
-#            get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
-#          done
-#          cd ..
-#
-#          find . -name "*-update.json" | grep . || : >dummy-update.json
-#
-#      - uses: stefanzweifel/git-auto-commit-action@v5
-#        with:
-#          branch: update
-#          skip_checkout: true
-#          file_pattern: build.md *-update.json
-#          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-  build_rvxb:
-    # needs: build_modules
+ build_modules:
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v4
+       with:
+         fetch-depth: 0
+         submodules: true
+
+     - name: Set up Java
+       uses: actions/setup-java@v4
+       with:
+         distribution: "zulu"
+         java-version: "17"
+
+     - name: Update config
+       if: ${{ inputs.from_ci }}
+       run: |
+         if git checkout origin/update build.md; then
+           UPDATE_CFG=$(./build.sh config.toml --config-update)
+           if [ "$UPDATE_CFG" ]; then
+             echo "$UPDATE_CFG" > config.toml
+           fi
+         fi
+
+     - name: Get next version code
+       id: next_ver_code
+       run: |
+         TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
+         if [ -z "$TAG" ]; then TAG=0; fi
+         echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
+
+     - name: Build modules/APKs
+       run: ./build.sh config.toml original
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         GITHUB_REPOSITORY: ${{ github.repository }}
+         NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+
+     - name: Get output
+       id: get_output
+       run: |
+         DELIM="$(openssl rand -hex 8)"
+         echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
+         cat build.md >> "$GITHUB_OUTPUT"
+         echo "${DELIM}" >> "$GITHUB_OUTPUT"
+         cp -f build.md build_original.tmp
+
+     - name: Upload modules to release
+       uses: svenstaro/upload-release-action@v2
+       with:
+         body: ${{ steps.get_output.outputs.BUILD_LOG }}
+         repo_token: ${{ secrets.GITHUB_TOKEN }}
+         file: ./build/*
+         release_name: anddea ReVanced Modules
+         tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+         file_glob: true
+         overwrite: true
+
+     - name: Update changelog and Magisk update json
+       id: update_config
+       run: |
+         git checkout -f update || git switch --discard-changes --orphan update
+         cp -f build_original.tmp build_original.md
+         get_update_json() {
+           echo "{
+           \"version\": \"$1\",
+           \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }},
+           \"zipUrl\": \"$2\",
+           \"changelog\": \"https://raw.githubusercontent.com/${{ github.repository }}/update/build_original.md\"
+         }"
+         }
+
+         cd build || { echo "build folder not found"; exit 1; }
+         for OUTPUT in *magisk*.zip; do
+           [ "$OUTPUT" = "*magisk*.zip" ] && continue
+           ZIP_S=$(unzip -p "$OUTPUT" module.prop)
+           if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
+           UPDATE_JSON="${UPDATE_JSON##*/}"
+           VER=$(echo "$ZIP_S" | grep version=)
+           VER="${VER##*=}"
+           DLURL="${{ github.server_url }}/${{ github.repository }}/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
+           get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
+         done
+         cd ..
+
+         find . -name "*-original-update.json" | grep . || : >dummy-update.json
+
+     - uses: stefanzweifel/git-auto-commit-action@v5
+       with:
+         branch: update
+         skip_checkout: true
+         file_pattern: build_original.md *-original-update.json
+         commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+
+ build_rvxb:
+    needs: build_modules
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: 'Snaky1a/rvx-magisk'
           fetch-depth: 0
           submodules: true
 
@@ -124,21 +124,13 @@ jobs:
           distribution: "zulu"
           java-version: "17"
         
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      
-      - name: Install all dependencies
-        run: pip install -r requirements.txt
-
       - name: Update config
         if: ${{ inputs.from_ci }}
         run: |
           if git checkout origin/update build.md; then
-            UPDATE_CFG=$(./build.sh config.toml --config-update)
+            UPDATE_CFG=$(./build.sh config_rvxb.toml --config-update)
             if [ "$UPDATE_CFG" ]; then
-              echo "$UPDATE_CFG" > config.toml
+              echo "$UPDATE_CFG" > config_rvxb.toml
             fi
           fi
 
@@ -150,14 +142,14 @@ jobs:
           echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
 
       - name: Build modules/APKs
-        run: ./build.sh config.toml anddea
+        run: ./build.sh config_rvxb.toml rvxb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: 'Snaky1a/rvx-magisk'
+          GITHUB_REPOSITORY: ${{ github.repository }}
           NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
 
       - name: output test
-        run: ls build
+        run: ls
 
       - name: Get output
         id: get_output
@@ -205,392 +197,386 @@ jobs:
           done
           cd ..
           find . -name "*-anddea-update.json" | grep . || : >dummy-update.json
-      
-      - run: sleep 60
 
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: update
           skip_checkout: true
-          file_pattern: build.md *-rvxb-update.json
+          file_pattern: build_rvxb.md *-rvxb-update.json
           commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#  build_rvxr:
-#    needs: build_rvxb
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#        with:
-#          repository: 'IgorTHh1337/rvxr-magisk-lol'
-#          fetch-depth: 0
-#          submodules: true
-#
-#      - name: Set up Java
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: "zulu"
-#          java-version: "17"
-#
-#      - name: Update config
-#        if: ${{ inputs.from_ci }}
-#        run: |
-#          if git checkout origin/update build.md; then
-#            UPDATE_CFG=$(./build.sh config.toml --config-update)
-#            if [ "$UPDATE_CFG" ]; then
-#              echo "$UPDATE_CFG" > config.toml
-#            fi
-#          fi
-#
-#      - name: Get next version code
-#        id: next_ver_code
-#        run: |
-#          TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
-#          if [ -z "$TAG" ]; then TAG=0; fi
-#          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
-#
-#      - name: Build modules/APKs
-#        run: ./build.sh config.toml rvxr
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          GITHUB_REPOSITORY: 'IgorTHh1337/rvxr-magisk-lol'
-#          NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#
-#      - name: Get output
-#        id: get_output
-#        run: |
-#          DELIM="$(openssl rand -hex 8)"
-#          echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
-#          cat build.md >> "$GITHUB_OUTPUT"
-#          echo "${DELIM}" >> "$GITHUB_OUTPUT"
-#          cp -f build.md build_rvxr.tmp
-#
-#      - name: Upload modules to release
-#        uses: svenstaro/upload-release-action@v2
-#        with:
-#          body: ${{ steps.get_output.outputs.BUILD_LOG }}
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: ./build/*
-#          tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#          file_glob: true
-#          overwrite: true
-#
-#      - name: Update changelog and Magisk update json
-#        id: update_config
-#        run: |
-#          git checkout -f update || git switch --discard-changes --orphan update
-#          cp -f build_rvxr.tmp build_rvxr.md
-#          get_update_json() {
-#            echo "{
-#            \"version\": \"$1\",
-#            \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE}},
-#            \"zipUrl\": \"$2\",
-#            \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build_rvxr.md\"
-#          }"
-#          }
-#
-#          cd build || { echo "build folder not found"; exit 1; }
-#          for OUTPUT in *magisk*.zip; do
-#            [ "$OUTPUT" = "*magisk*.zip" ] && continue
-#            ZIP_S=$(unzip -p "$OUTPUT" module.prop)
-#            if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
-#            UPDATE_JSON="${UPDATE_JSON##*/}"
-#            VER=$(echo "$ZIP_S" | grep version=)
-#            VER="${VER##*=}"
-#            DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
-#            get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
-#          done
-#          cd ..
-#
-#          find . -name "*-rvxr-update.json" | grep . || : >dummy-update.json
-#
-#      - uses: stefanzweifel/git-auto-commit-action@v5
-#        with:
-#          branch: update
-#          skip_checkout: true
-#          file_pattern: build.md *-rvxr-update.json
-#          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#  build_rvxab:
-#    needs: build_rvxr
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#        with:
-#          repository: 'IgorTHh1337/rvxab-magisk-lol'
-#          fetch-depth: 0
-#          submodules: true
-#
-#      - name: Set up Java
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: "zulu"
-#          java-version: "17"
-#
-#      - name: Update config
-#        if: ${{ inputs.from_ci }}
-#        run: |
-#          if git checkout origin/update build.md; then
-#            UPDATE_CFG=$(./build.sh config.toml --config-update)
-#            if [ "$UPDATE_CFG" ]; then
-#              echo "$UPDATE_CFG" > config.toml
-#            fi
-#          fi
-#
-#      - name: Get next version code
-#        id: next_ver_code
-#        run: |
-#          TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
-#          if [ -z "$TAG" ]; then TAG=0; fi
-#          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
-#
-#      - name: Build modules/APKs
-#        run: ./build.sh config.toml rvxab
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          GITHUB_REPOSITORY: 'IgorTHh1337/rvxab-magisk-lol'
-#          NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#
-#      - name: Get output
-#        id: get_output
-#        run: |
-#          DELIM="$(openssl rand -hex 8)"
-#          echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
-#          cat build.md >> "$GITHUB_OUTPUT"
-#          echo "${DELIM}" >> "$GITHUB_OUTPUT"
-#          cp -f build.md build_rvxab.tmp
-#
-#      - name: Upload modules to release
-#        uses: svenstaro/upload-release-action@v2
-#        with:
-#          body: ${{ steps.get_output.outputs.BUILD_LOG }}
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: ./build/*
-#          tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#          file_glob: true
-#          overwrite: true
-#
-#      - name: Update changelog and Magisk update json
-#        id: update_config
-#        run: |
-#          git checkout -f update || git switch --discard-changes --orphan update
-#          cp -f build_rvxab.tmp build_rvxab.md
-#          get_update_json() {
-#            echo "{
-#            \"version\": \"$1\",
-#            \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE}},
-#            \"zipUrl\": \"$2\",
-#            \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build_rvxab.md\"
-#          }"
-#          }
-#
-#          cd build || { echo "build folder not found"; exit 1; }
-#          for OUTPUT in *magisk*.zip; do
-#            [ "$OUTPUT" = "*magisk*.zip" ] && continue
-#            ZIP_S=$(unzip -p "$OUTPUT" module.prop)
-#            if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
-#            UPDATE_JSON="${UPDATE_JSON##*/}"
-#            VER=$(echo "$ZIP_S" | grep version=)
-#            VER="${VER##*=}"
-#            DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
-#            get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
-#          done
-#          cd ..
-#
-#          find . -name "*-rvxab-update.json" | grep . || : >dummy-update.json
-#
-#      - uses: stefanzweifel/git-auto-commit-action@v5
-#        with:
-#          branch: update
-#          skip_checkout: true
-#          file_pattern: build.md *-rvxab-update.json
-#          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#  build_rvxar:
-#    needs: build_rvxab
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#        with:
-#          repository: 'IgorTHh1337/rvxar-magisk-lol'
-#          fetch-depth: 0
-#          submodules: true
-#
-#      - name: Set up Java
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: "zulu"
-#          java-version: "17"
-#
-#      - name: Update config
-#        if: ${{ inputs.from_ci }}
-#        run: |
-#          if git checkout origin/update build.md; then
-#            UPDATE_CFG=$(./build.sh config.toml --config-update)
-#            if [ "$UPDATE_CFG" ]; then
-#              echo "$UPDATE_CFG" > config.toml
-#            fi
-#          fi
-#
-#      - name: Get next version code
-#        id: next_ver_code
-#        run: |
-#          TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
-#          if [ -z "$TAG" ]; then TAG=0; fi
-#          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
-#
-#      - name: Build modules/APKs
-#        run: ./build.sh config.toml rvxar
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          GITHUB_REPOSITORY: 'IgorTHh1337/rvxar-magisk-lol'
-#          NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#
-#      - name: Get output
-#        id: get_output
-#        run: |
-#          DELIM="$(openssl rand -hex 8)"
-#          echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
-#          cat build.md >> "$GITHUB_OUTPUT"
-#          echo "${DELIM}" >> "$GITHUB_OUTPUT"
-#          cp -f build.md build_rvxar.tmp
-#
-#      - name: Upload modules to release
-#        uses: svenstaro/upload-release-action@v2
-#        with:
-#          body: ${{ steps.get_output.outputs.BUILD_LOG }}
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: ./build/*
-#          tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#          file_glob: true
-#          overwrite: true
-#
-#      - name: Update changelog and Magisk update json
-#        id: update_config
-#        run: |
-#          git checkout -f update || git switch --discard-changes --orphan update
-#          cp -f build.tmp build.md
-#          get_update_json() {
-#            echo "{
-#            \"version\": \"$1\",
-#            \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE}},
-#            \"zipUrl\": \"$2\",
-#            \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build_rvxar.md\"
-#          }"
-#          }
-#
-#          cd build || { echo "build folder not found"; exit 1; }
-#          for OUTPUT in *magisk*.zip; do
-#            [ "$OUTPUT" = "*magisk*.zip" ] && continue
-#            ZIP_S=$(unzip -p "$OUTPUT" module.prop)
-#            if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
-#            UPDATE_JSON="${UPDATE_JSON##*/}"
-#            VER=$(echo "$ZIP_S" | grep version=)
-#            VER="${VER##*=}"
-#            DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
-#            get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
-#          done
-#          cd ..
-#
-#          find . -name "*-rvxar-update.json" | grep . || : >dummy-update.json
-#
-#      - uses: stefanzweifel/git-auto-commit-action@v5
-#        with:
-#          branch: update
-#          skip_checkout: true
-#          file_pattern: build.md *-rvxar-update.json
-#          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#  build_rvxm:
-#    needs: build_rvxar
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#        with:
-#          repository: 'IgorTHh1337/rvxm-magisk-lol'
-#          fetch-depth: 0
-#          submodules: true
-#
-#      - name: Set up Java
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: "zulu"
-#          java-version: "17"
-#
-#      - name: Update config
-#        if: ${{ inputs.from_ci }}
-#        run: |
-#          if git checkout origin/update build.md; then
-#            UPDATE_CFG=$(./build.sh config.toml --config-update)
-#            if [ "$UPDATE_CFG" ]; then
-#              echo "$UPDATE_CFG" > config.toml
-#            fi
-#          fi
-#
-#      - name: Get next version code
-#        id: next_ver_code
-#        run: |
-#          TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
-#          if [ -z "$TAG" ]; then TAG=0; fi
-#          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
-#
-#      - name: Build modules/APKs
-#        run: ./build.sh config.toml rvxm
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          GITHUB_REPOSITORY: 'IgorTHh1337/rvxm-magisk-lol'
-#          NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#
-#      - name: Get output
-#        id: get_output
-#        run: |
-#          DELIM="$(openssl rand -hex 8)"
-#          echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
-#          cat build.md >> "$GITHUB_OUTPUT"
-#          echo "${DELIM}" >> "$GITHUB_OUTPUT"
-#          cp -f build.md build_rvxm.tmp
-#
-#      - name: Upload modules to release
-#        uses: svenstaro/upload-release-action@v2
-#        with:
-#          body: ${{ steps.get_output.outputs.BUILD_LOG }}
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: ./build/*
-#          tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-#          file_glob: true
-#          overwrite: true
-#
-#      - name: Update changelog and Magisk update json
-#        id: update_config
-#        run: |
-#          git checkout -f update || git switch --discard-changes --orphan update
-#          cp -f build.tmp build.md
-#          get_update_json() {
-#            echo "{
-#            \"version\": \"$1\",
-#            \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE}},
-#            \"zipUrl\": \"$2\",
-#            \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build_rvxm.md\"
-#          }"
-#          }
-#
-#          cd build || { echo "build folder not found"; exit 1; }
-#          for OUTPUT in *magisk*.zip; do
-#            [ "$OUTPUT" = "*magisk*.zip" ] && continue
-#            ZIP_S=$(unzip -p "$OUTPUT" module.prop)
-#            if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
-#            UPDATE_JSON="${UPDATE_JSON##*/}"
-#            VER=$(echo "$ZIP_S" | grep version=)
-#            VER="${VER##*=}"
-#            DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
-#            get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
-#          done
-#          cd ..
-#
-#          find . -name "*-rvxm-update.json" | grep . || : >dummy-update.json
-#
-#      - uses: stefanzweifel/git-auto-commit-action@v5
-#        with:
-#          branch: update
-#          skip_checkout: true
-#          file_pattern: build.md *-rvxm-update.json
-#          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+ build_rvxr:
+   needs: build_rvxb
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v4
+       with:
+         fetch-depth: 0
+         submodules: true
+
+     - name: Set up Java
+       uses: actions/setup-java@v4
+       with:
+         distribution: "zulu"
+         java-version: "17"
+
+     - name: Update config
+       if: ${{ inputs.from_ci }}
+       run: |
+         if git checkout origin/update build_rvxr.md; then
+           UPDATE_CFG=$(./build.sh config_rvxr.toml --config-update)
+           if [ "$UPDATE_CFG" ]; then
+             echo "$UPDATE_CFG" > config_rvxr.toml
+           fi
+         fi
+
+     - name: Get next version code
+       id: next_ver_code
+       run: |
+         TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
+         if [ -z "$TAG" ]; then TAG=0; fi
+         echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
+
+     - name: Build modules/APKs
+       run: ./build.sh config_rvxr.toml rvxr
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         GITHUB_REPOSITORY: ${{ github.repository }}
+         NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+
+     - name: Get output
+       id: get_output
+       run: |
+         DELIM="$(openssl rand -hex 8)"
+         echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
+         cat build.md >> "$GITHUB_OUTPUT"
+         echo "${DELIM}" >> "$GITHUB_OUTPUT"
+         cp -f build.md build_rvxr.tmp
+
+     - name: Upload modules to release
+       uses: svenstaro/upload-release-action@v2
+       with:
+         body: ${{ steps.get_output.outputs.BUILD_LOG }}
+         repo_token: ${{ secrets.GITHUB_TOKEN }}
+         file: ./build/*
+         tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+         file_glob: true
+         overwrite: true
+
+     - name: Update changelog and Magisk update json
+       id: update_config
+       run: |
+         git checkout -f update || git switch --discard-changes --orphan update
+         cp -f build_rvxr.tmp build_rvxr.md
+         get_update_json() {
+           echo "{
+           \"version\": \"$1\",
+           \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE}},
+           \"zipUrl\": \"$2\",
+           \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build_rvxr.md\"
+         }"
+         }
+
+         cd build || { echo "build folder not found"; exit 1; }
+         for OUTPUT in *magisk*.zip; do
+           [ "$OUTPUT" = "*magisk*.zip" ] && continue
+           ZIP_S=$(unzip -p "$OUTPUT" module.prop)
+           if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
+           UPDATE_JSON="${UPDATE_JSON##*/}"
+           VER=$(echo "$ZIP_S" | grep version=)
+           VER="${VER##*=}"
+           DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
+           get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
+         done
+         cd ..
+
+         find . -name "*-rvxr-update.json" | grep . || : >dummy-update.json
+
+     - uses: stefanzweifel/git-auto-commit-action@v5
+       with:
+         branch: update
+         skip_checkout: true
+         file_pattern: build_rvxr.md *-rvxr-update.json
+         commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+ build_rvxab:
+   needs: build_rvxr
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v4
+       with:
+         fetch-depth: 0
+         submodules: true
+
+     - name: Set up Java
+       uses: actions/setup-java@v4
+       with:
+         distribution: "zulu"
+         java-version: "17"
+
+     - name: Update config
+       if: ${{ inputs.from_ci }}
+       run: |
+         if git checkout origin/update build_rvxab.md; then
+           UPDATE_CFG=$(./build.sh config_rvxab.toml --config-update)
+           if [ "$UPDATE_CFG" ]; then
+             echo "$UPDATE_CFG" > config_rvxab.toml
+           fi
+         fi
+
+     - name: Get next version code
+       id: next_ver_code
+       run: |
+         TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
+         if [ -z "$TAG" ]; then TAG=0; fi
+         echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
+
+     - name: Build modules/APKs
+       run: ./build.sh config_rvxab.toml rvxab
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         GITHUB_REPOSITORY: ${{ github.repository }}
+         NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+
+     - name: Get output
+       id: get_output
+       run: |
+         DELIM="$(openssl rand -hex 8)"
+         echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
+         cat build.md >> "$GITHUB_OUTPUT"
+         echo "${DELIM}" >> "$GITHUB_OUTPUT"
+         cp -f build.md build_rvxab.tmp
+
+     - name: Upload modules to release
+       uses: svenstaro/upload-release-action@v2
+       with:
+         body: ${{ steps.get_output.outputs.BUILD_LOG }}
+         repo_token: ${{ secrets.GITHUB_TOKEN }}
+         file: ./build/*
+         tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+         file_glob: true
+         overwrite: true
+
+     - name: Update changelog and Magisk update json
+       id: update_config
+       run: |
+         git checkout -f update || git switch --discard-changes --orphan update
+         cp -f build_rvxab.tmp build_rvxab.md
+         get_update_json() {
+           echo "{
+           \"version\": \"$1\",
+           \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE}},
+           \"zipUrl\": \"$2\",
+           \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build_rvxab.md\"
+         }"
+         }
+
+         cd build || { echo "build folder not found"; exit 1; }
+         for OUTPUT in *magisk*.zip; do
+           [ "$OUTPUT" = "*magisk*.zip" ] && continue
+           ZIP_S=$(unzip -p "$OUTPUT" module.prop)
+           if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
+           UPDATE_JSON="${UPDATE_JSON##*/}"
+           VER=$(echo "$ZIP_S" | grep version=)
+           VER="${VER##*=}"
+           DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
+           get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
+         done
+         cd ..
+
+         find . -name "*-rvxab-update.json" | grep . || : >dummy-update.json
+
+     - uses: stefanzweifel/git-auto-commit-action@v5
+       with:
+         branch: update
+         skip_checkout: true
+         file_pattern: build_rvxab.md *-rvxab-update.json
+         commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+ build_rvxar:
+   needs: build_rvxab
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v4
+       with:
+         fetch-depth: 0
+         submodules: true
+
+     - name: Set up Java
+       uses: actions/setup-java@v4
+       with:
+         distribution: "zulu"
+         java-version: "17"
+
+     - name: Update config
+       if: ${{ inputs.from_ci }}
+       run: |
+         if git checkout origin/update build_rvxar.md; then
+           UPDATE_CFG=$(./build.sh config_rvxar.toml --config-update)
+           if [ "$UPDATE_CFG" ]; then
+             echo "$UPDATE_CFG" > config_rvxar.toml
+           fi
+         fi
+
+     - name: Get next version code
+       id: next_ver_code
+       run: |
+         TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
+         if [ -z "$TAG" ]; then TAG=0; fi
+         echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
+
+     - name: Build modules/APKs
+       run: ./build.sh config.toml rvxar
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         GITHUB_REPOSITORY: ${{ github.repository }}
+         NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+
+     - name: Get output
+       id: get_output
+       run: |
+         DELIM="$(openssl rand -hex 8)"
+         echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
+         cat build.md >> "$GITHUB_OUTPUT"
+         echo "${DELIM}" >> "$GITHUB_OUTPUT"
+         cp -f build.md build_rvxar.tmp
+
+     - name: Upload modules to release
+       uses: svenstaro/upload-release-action@v2
+       with:
+         body: ${{ steps.get_output.outputs.BUILD_LOG }}
+         repo_token: ${{ secrets.GITHUB_TOKEN }}
+         file: ./build/*
+         tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+         file_glob: true
+         overwrite: true
+
+     - name: Update changelog and Magisk update json
+       id: update_config
+       run: |
+         git checkout -f update || git switch --discard-changes --orphan update
+         cp -f build_rvxar.tmp build_rvxar.md
+         get_update_json() {
+           echo "{
+           \"version\": \"$1\",
+           \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE}},
+           \"zipUrl\": \"$2\",
+           \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build_rvxar.md\"
+         }"
+         }
+
+         cd build || { echo "build folder not found"; exit 1; }
+         for OUTPUT in *magisk*.zip; do
+           [ "$OUTPUT" = "*magisk*.zip" ] && continue
+           ZIP_S=$(unzip -p "$OUTPUT" module.prop)
+           if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
+           UPDATE_JSON="${UPDATE_JSON##*/}"
+           VER=$(echo "$ZIP_S" | grep version=)
+           VER="${VER##*=}"
+           DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
+           get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
+         done
+         cd ..
+
+         find . -name "*-rvxar-update.json" | grep . || : >dummy-update.json
+
+     - uses: stefanzweifel/git-auto-commit-action@v5
+       with:
+         branch: update
+         skip_checkout: true
+         file_pattern: build_rvxar.md *-rvxar-update.json
+         commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+ build_rvxm:
+   needs: build_rvxar
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v4
+       with:
+         fetch-depth: 0
+         submodules: true
+
+     - name: Set up Java
+       uses: actions/setup-java@v4
+       with:
+         distribution: "zulu"
+         java-version: "17"
+
+     - name: Update config
+       if: ${{ inputs.from_ci }}
+       run: |
+         if git checkout origin/update build_rvxm.md; then
+           UPDATE_CFG=$(./build.sh config_rvxm.toml --config-update)
+           if [ "$UPDATE_CFG" ]; then
+             echo "$UPDATE_CFG" > config_rvxm.toml
+           fi
+         fi
+
+     - name: Get next version code
+       id: next_ver_code
+       run: |
+         TAG=$(gh release list -L 1 | awk -F '\t' '{print $3}')
+         if [ -z "$TAG" ]; then TAG=0; fi
+         echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
+
+     - name: Build modules/APKs
+       run: ./build.sh config_rvxm.toml rvxm
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         GITHUB_REPOSITORY: ${{ github.repository }}
+         NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+
+     - name: Get output
+       id: get_output
+       run: |
+         DELIM="$(openssl rand -hex 8)"
+         echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
+         cat build.md >> "$GITHUB_OUTPUT"
+         echo "${DELIM}" >> "$GITHUB_OUTPUT"
+         cp -f build.md build_rvxm.tmp
+
+     - name: Upload modules to release
+       uses: svenstaro/upload-release-action@v2
+       with:
+         body: ${{ steps.get_output.outputs.BUILD_LOG }}
+         repo_token: ${{ secrets.GITHUB_TOKEN }}
+         file: ./build/*
+         tag: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+         file_glob: true
+         overwrite: true
+
+     - name: Update changelog and Magisk update json
+       id: update_config
+       run: |
+         git checkout -f update || git switch --discard-changes --orphan update
+         cp -f build_rvxm.tmp build_rvxm.md
+         get_update_json() {
+           echo "{
+           \"version\": \"$1\",
+           \"versionCode\": ${{ steps.next_ver_code.outputs.NEXT_VER_CODE}},
+           \"zipUrl\": \"$2\",
+           \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build_rvxm.md\"
+         }"
+         }
+
+         cd build || { echo "build folder not found"; exit 1; }
+         for OUTPUT in *magisk*.zip; do
+           [ "$OUTPUT" = "*magisk*.zip" ] && continue
+           ZIP_S=$(unzip -p "$OUTPUT" module.prop)
+           if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
+           UPDATE_JSON="${UPDATE_JSON##*/}"
+           VER=$(echo "$ZIP_S" | grep version=)
+           VER="${VER##*=}"
+           DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}/${OUTPUT}"
+           get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
+         done
+         cd ..
+
+         find . -name "*-rvxm-update.json" | grep . || : >dummy-update.json
+
+     - uses: stefanzweifel/git-auto-commit-action@v5
+       with:
+         branch: update
+         skip_checkout: true
+         file_pattern: build_rvxm.md *-rvxm-update.json
+         commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
