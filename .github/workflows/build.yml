@@ -103,6 +103,11 @@ jobs:
 
          find . -name "*-original-update.json" | grep . || : >dummy-update.json
 
+     - name: Update git
+       run: |
+         git fetch origin update
+         git pull origin update
+
      - uses: stefanzweifel/git-auto-commit-action@v5
        with:
          branch: update
@@ -151,9 +156,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
-
-      - name: output test
-        run: ls
 
       - name: Get output
         id: get_output
@@ -681,8 +683,6 @@ jobs:
         cat build.md >> "$GITHUB_OUTPUT"
         echo "${DELIM}" >> "$GITHUB_OUTPUT"
         cp -f build.md build_reddit.tmp
-  
-    - run: sleep 50
 
     - name: Upload modules to release
       uses: svenstaro/upload-release-action@v2
