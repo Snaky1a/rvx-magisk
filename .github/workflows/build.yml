@@ -450,7 +450,7 @@ jobs:
          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
 
      - name: Build modules/APKs
-       run: ./build.sh config.toml rvxar options_rvxar.json
+       run: ./build.sh config_rvxar.toml rvxar options_rvxar.json
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          GITHUB_REPOSITORY: ${{ github.repository }}
