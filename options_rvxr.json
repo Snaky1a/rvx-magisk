@@ -1,0 +1,47 @@
+        
+[
+    {
+      "patchName": "Custom package name",
+      "options": [
+        {
+          "key": "PackageNameYouTubeMusic",
+          "value": "app.revanced.android.apps.youtube.music"
+        },
+        {
+          "key": "PackageNameYouTube",
+          "value": "app.revanced.android.youtube"
+        }
+      ]
+    },
+    {
+      "patchName": "Custom branding icon YouTube",
+      "options": [
+        {
+          "key": "AppIcon",
+          "value": "Revancify Red"
+        }
+      ]
+    },
+    {
+      "patchName": "Custom package name",
+      "options": [
+        {
+          "key": "PackageNameYouTube",
+          "value": "app.revanced.android.youtube"
+        },
+        {
+          "key": "PackageNameYouTubeMusic",
+          "value": "app.revanced.android.apps.youtube.music"
+        }
+      ]
+    },
+    {
+      "patchName": "Custom branding icon YouTube Music",
+      "options": [
+        {
+          "key": "AppIcon",
+          "value": "Revancify Red"
+        }
+      ]
+    }
+  ]

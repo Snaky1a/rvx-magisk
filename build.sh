@@ -151,18 +151,18 @@ for table_name in $(toml_get_table_names); do
 		app_args[module_prop_name]="${app_args[module_prop_name]}-arm64"
 		app_args[arch]="arm64-v8a"
 		idx=$((idx + 1))
-		echo ${2:-}
-		build_rv "$(declare -p app_args)" ${2:-} &
+		echo ${3:-}
+		build_rv "$(declare -p app_args)" ${2:-} ${3:-} &
 		app_args[table]="$table_name (arm-v7a)"
 		app_args[module_prop_name]="${app_args[module_prop_name]}-arm"
 		app_args[arch]="arm-v7a"
 		if ((idx >= PARALLEL_JOBS)); then wait -n; fi
 		idx=$((idx + 1))
-		build_rv "$(declare -p app_args)" ${2:-} &
+		build_rv "$(declare -p app_args)" ${2:-} ${3:-} &
 	else
 		idx=$((idx + 1))
-		echo ${2:-}
-		build_rv "$(declare -p app_args)" ${2:-} &
+		echo ${3:-}
+		build_rv "$(declare -p app_args)" ${2:-} ${3:-} &
 	fi
 done
 wait

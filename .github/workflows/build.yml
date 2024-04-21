@@ -46,7 +46,7 @@ jobs:
          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
 
      - name: Build modules/APKs
-       run: ./build.sh config.toml original
+       run: ./build.sh config.toml original options.json
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          GITHUB_REPOSITORY: ${{ github.repository }}
@@ -142,7 +142,7 @@ jobs:
           echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
 
       - name: Build modules/APKs
-        run: ./build.sh config_rvxb.toml rvxb
+        run: ./build.sh config_rvxb.toml rvxb options_rvxb.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -246,7 +246,7 @@ jobs:
          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
 
      - name: Build modules/APKs
-       run: ./build.sh config_rvxr.toml rvxr
+       run: ./build.sh config_rvxr.toml rvxr options_rvxr.json
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          GITHUB_REPOSITORY: ${{ github.repository }}
@@ -348,7 +348,7 @@ jobs:
          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
 
      - name: Build modules/APKs
-       run: ./build.sh config_rvxab.toml rvxab
+       run: ./build.sh config_rvxab.toml rvxab options_rvxab.json
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          GITHUB_REPOSITORY: ${{ github.repository }}
@@ -450,7 +450,7 @@ jobs:
          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
 
      - name: Build modules/APKs
-       run: ./build.sh config.toml rvxar
+       run: ./build.sh config.toml rvxar options_rvxar.json
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          GITHUB_REPOSITORY: ${{ github.repository }}
@@ -552,7 +552,7 @@ jobs:
          echo "::set-output name=NEXT_VER_CODE::$((TAG + 1))"
 
      - name: Build modules/APKs
-       run: ./build.sh config_rvxm.toml rvxm
+       run: ./build.sh config_rvxm.toml rvxm options_rvxm.json
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          GITHUB_REPOSITORY: ${{ github.repository }}
