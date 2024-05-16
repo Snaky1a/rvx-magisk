@@ -9,7 +9,7 @@ integrations-version = "v0.152.0-dev.8"
 # you can use rvmm-config-gen to generate a config
 
 [YouTube]
-apkmirror-dlurl = https://www.apkmirror.com/apk/google-inc/youtube/
+uptodown-dlurl = "https://youtube.en.uptodown.com/android"
 patches-source = "anddea/revanced-patches"
 integrations-source = "anddea/revanced-integrations"
 rv-brand = "anddea ReVanced Afn Red Icon"
@@ -19,7 +19,7 @@ excluded-patches = "'Theme'"
 version = "auto"
 
 [YouTube Music]
-apkmirror-dlurl = https://www.apkmirror.com/apk/google-inc/youtube-music/
+uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
 patches-source = "anddea/revanced-patches"
 integrations-source = "anddea/revanced-integrations"
 rv-brand = "anddea ReVanced Afn Red Icon"
