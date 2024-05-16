@@ -271,7 +271,9 @@ get_uptodown_vers() { $HTMLQ --text ".version" <<<"$__UPTODOWN_RESP__"; }
 dl_uptodown() {
 	local uptodown_dlurl=$1 version=$2 output=$3
 	local url
-	echo $output
+	echo "Before: $output"
+	output=${output// /\/}
+	echo "After:  $uptodown_dlurl"
 	url=$(grep -F "${version}</span>" -B 2 <<<"$__UPTODOWN_RESP__" | head -1 | sed -n 's;.*data-url=".*download\/\(.*\)".*;\1;p') || return 1
 	url="https://dw.uptodown.com/dwn/$(req "${uptodown_dlurl}/post-download/${url}" - | sed -n 's;.*class="post-download" data-url="\(.*\)".*;\1;p')" || return 1
 	req "$url" "$output"
