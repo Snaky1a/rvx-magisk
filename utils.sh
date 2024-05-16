@@ -272,7 +272,7 @@ dl_uptodown() {
 	local uptodown_dlurl=$1 version=$2 output=$3
 	local url
 	echo "Before: $output"
-	modified=$(echo "$output" | sed 's/ /\\//')
+	local modified="${output// /\/}"
 	echo "After: $modified"
 	url=$(grep -F "${version}</span>" -B 2 <<<"$__UPTODOWN_RESP__" | head -1 | sed -n 's;.*data-url=".*download\/\(.*\)".*;\1;p') || return 1
 	url="https://dw.uptodown.com/dwn/$(req "${uptodown_dlurl}/post-download/${url}" - | sed -n 's;.*class="post-download" data-url="\(.*\)".*;\1;p')" || return 1
