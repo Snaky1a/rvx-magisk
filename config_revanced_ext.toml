@@ -2,6 +2,7 @@ enable-magisk-update = true   # set this to false if you do not want to receive 
 
 patches-version = "v4.8.0-dev.4"
 integrations-version = "v1.9.0-dev.3"
+cli-source = "inotia00/revanced-cli"
 
 # add 'enabled = false' for not patching a specific app or remove it from the config
 # see https://github.com/j-hc/revanced-magisk-module/blob/main/CONFIG.md for more detailed explanations
