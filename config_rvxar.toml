@@ -18,7 +18,7 @@ included-patches = "'Custom branding icon YouTube' 'MaterialYou'"
 excluded-patches = "'Theme'"
 
 [YouTube Music]
-uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
+archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.youtube"
 patches-source = "anddea/revanced-patches"
 integrations-source = "anddea/revanced-integrations"
 rv-brand = "anddea ReVanced Afn Red Icon"
