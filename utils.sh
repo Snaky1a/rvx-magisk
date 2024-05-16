@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MODULE_TEMPLATE_DIR="revanced-magisk"
-TEMP_DIR="temp"
+TEMP_DIR="temp/"
 BIN_DIR="bin"
 BUILD_DIR="build"
 
@@ -387,7 +387,7 @@ build_rv() {
 	pr "Choosing version '${version}' for ${table}"
 	local version_f=${version// /}
 	version_f=${version_f#v}
-	local stock_apk="${TEMP_DIR}/${pkg_name}-${version_f}-${arch_f}.apk"
+	local stock_apk="${TEMP_DIR}${pkg_name}-${version_f}-${arch_f}.apk"
 	if [ ! -f "$stock_apk" ]; then
 		for dl_p in archive apkmirror uptodown apkmonk; do
 			if [ -z "${args[${dl_p}_dlurl]}" ]; then continue; fi
