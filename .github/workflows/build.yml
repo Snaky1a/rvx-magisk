@@ -771,7 +771,7 @@ jobs:
          echo "NEXT_VER_CODE=$((TAG + 1))" >> $GITHUB_OUTPUT
 
      - name: Build modules/APKs
-       run: ./build.sh config_revanced_ext.toml revanced_ext options.json
+       run: ./build.sh config_revanced_ext.toml revanced-extended options.json
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          GITHUB_REPOSITORY: ${{ github.repository }}
@@ -826,7 +826,7 @@ jobs:
          done
          cd ..
 
-         find . -name "*-revanced_ext-update.json" | grep . || : >dummy-update.json
+         find . -name "*-revanced-extended-update.json" | grep . || : >dummy-update.json
 
      - name: Update git
        run: |
@@ -838,5 +838,5 @@ jobs:
          branch: update
          skip_fetch: false
          skip_checkout: false
-         file_pattern: build_revanced_inotia.md *-revanced_ext-update.json
+         file_pattern: build_revanced_inotia.md *-revanced-extended-update.json
          commit_message: Bump version ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
