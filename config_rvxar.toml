@@ -16,6 +16,7 @@ rv-brand = "anddea ReVanced Afn Red Icon"
 build-mode = "both"
 included-patches = "'Custom branding icon YouTube' 'MaterialYou'"
 excluded-patches = "'Theme'"
+version = "auto"
 
 [YouTube Music]
 archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.youtube"
@@ -25,3 +26,4 @@ rv-brand = "anddea ReVanced Afn Red Icon"
 build-mode = "both"
 included-patches = "'Custom branding icon YouTube Music'"
 excluded-patches = "'Amoled'"
+version = "auto"
